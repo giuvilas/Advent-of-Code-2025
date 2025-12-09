@@ -4,13 +4,26 @@ Solution for [Advent of Code 2025 Day 9](https://adventofcode.com/2025/day/9)
 
 ## Files
 
-- `day9_movie_theater.py` - Python script that solves the challenge
+- `day9_movie_theater.py` - Part 1 solution
+- `day9_part2.py` - Part 2 solution
 - `input.txt` - Puzzle input (496 red tile coordinates)
 - `day9part1.txt` - Part 1 puzzle description
+- `day9part2.txt` - Part 2 puzzle description
+- `test_example.txt` - Example input for validation
 
 ## Problem Overview
 
-The movie theater has a tile floor with red tiles at specific coordinates. The challenge is to find the **largest rectangle** that can be formed using any two red tiles as opposite corners.
+The movie theater has a tile floor with red tiles at specific coordinates.
+
+### Part 1
+Find the **largest rectangle** that can be formed using any two red tiles as opposite corners.
+
+### Part 2
+The red tiles form a **closed polygon** (connected in list order). Green tiles fill:
+- The edges connecting consecutive red tiles
+- All tiles inside the polygon
+
+Find the largest rectangle with red corners that is **entirely within the polygon** (only contains red/green tiles).
 
 ### Key Concepts
 
@@ -62,19 +75,25 @@ day 9/
 
 ## How to Run
 
-Make sure you're in the `day 9` directory, then run:
+Make sure you're in the `day 9` directory.
+
+### Part 1
 
 ```bash
 python3 day9_movie_theater.py
 ```
 
-Or if the script is executable:
+### Part 2
 
 ```bash
-./day9_movie_theater.py
+python3 day9_part2.py
 ```
 
+Or if the scripts are executable, use `./day9_movie_theater.py` or `./day9_part2.py`
+
 ## Expected Output
+
+### Part 1
 
 ```
 Number of red tiles: 496
@@ -85,9 +104,27 @@ Corners: (85024, 83904) and (15221, 15856)
 Answer: 4750092396
 ```
 
+### Part 2
+
+```
+Number of red tiles (polygon vertices): 496
+
+Checking 122760 rectangle candidates...
+Progress: 0/496 tiles checked...
+  [Progress updates as it finds larger rectangles...]
+Progress: 450/496 tiles checked...
+Checked 31308 candidate rectangles
+
+============================================================
+Largest valid rectangle area: 4606686568
+Corners: (15065, 83109) and (84782, 17034)
+
+Answer: 4606686568
+```
+
 ## Algorithm Details
 
-### Approach: Brute Force with All Pairs
+### Part 1: Brute Force with All Pairs
 
 The solution uses a straightforward O(n²) algorithm:
 
@@ -115,16 +152,46 @@ The solution uses a straightforward O(n²) algorithm:
 - The rectangle doesn't need to contain only red tiles - just have red tiles at two opposite corners
 - This is optimal for this problem type
 
+### Part 2: Polygon Constraint with Point-in-Polygon Testing
+
+Part 2 adds a significant constraint - the rectangle must be entirely within the polygon:
+
+1. **Build Polygon**: Red tiles form a closed polygon (in input order)
+2. **Point-in-Polygon Test**: Implement ray casting algorithm to check if points are inside
+3. **Validate Rectangles**: For each red tile pair:
+   - Calculate potential area
+   - Skip if it can't beat current maximum (optimization)
+   - Check if all corners are inside/on polygon
+   - Sample edge and interior points for large rectangles
+   - Track maximum valid area
+4. **Return Result**: Output largest valid rectangle
+
+**Key Optimizations**:
+- Only check rectangles that could beat the current max
+- Sample points intelligently (corners + edges + center)
+- Early termination when checking validity
+
+**Complexity**:
+- Time: O(n² × m) where n = tiles, m = polygon vertices for each point test
+- With 496 tiles, checks ~122k candidates, validates ~31k promising ones
+- Runs in ~10-20 seconds
+
 ## Solution Verification
 
-For the given input:
-- **Number of tiles**: 496
+### Part 1
 - **Largest area**: 4,750,092,396
 - **Corners**: (85024, 83904) and (15221, 15856)
-- **Width**: |85024 - 15221| + 1 = 69,804 cells
-- **Height**: |83904 - 15856| + 1 = 68,049 cells
+- **Width**: 69,804 cells | **Height**: 68,049 cells
 - **Verification**: 69,804 × 68,049 = 4,750,092,396 ✓
 
-### Common Mistake
+### Part 2
+- **Largest area**: 4,606,686,568
+- **Corners**: (15065, 83109) and (84782, 17034)
+- **Width**: 69,718 cells | **Height**: 66,076 cells
+- **Verification**: 69,718 × 66,076 = 4,606,686,568 ✓
+- **Note**: Smaller than Part 1 due to polygon constraint ✓
 
-Don't forget the "+1" when counting grid cells! The geometric distance between coordinates is different from the number of cells they span.
+### Common Mistakes
+
+1. **Part 1**: Don't forget the "+1" when counting grid cells! The geometric distance between coordinates is different from the number of cells they span.
+2. **Part 2**: The polygon is formed by the tiles in list order - don't sort them!
