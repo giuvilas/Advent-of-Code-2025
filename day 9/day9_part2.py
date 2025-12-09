@@ -87,31 +87,34 @@ def is_rectangle_valid(x1, y1, x2, y2, polygon):
         if not point_in_polygon(x, y, polygon):
             return False
 
-    # Sample points along edges for larger rectangles
-    # This helps catch cases where corners are inside but edges cross outside
-    sample_count = min(10, max(abs(x2 - x1), abs(y2 - y1)) // 1000 + 1)
+    # Sample points along edges more densely
+    # For large rectangles, sample every ~500 cells to catch concave regions
+    width = abs(x2 - x1)
+    height = abs(y2 - y1)
 
-    # Sample along horizontal edges
-    for i in range(1, sample_count):
-        x = x1 + (x2 - x1) * i // sample_count
+    # Sample horizontal edges (top and bottom)
+    step_x = max(1, width // 200)  # Sample ~200 points across width
+    for x in range(x1, x2 + 1, step_x):
         if not point_in_polygon(x, y1, polygon):
             return False
         if not point_in_polygon(x, y2, polygon):
             return False
 
-    # Sample along vertical edges
-    for i in range(1, sample_count):
-        y = y1 + (y2 - y1) * i // sample_count
+    # Sample vertical edges (left and right)
+    step_y = max(1, height // 200)  # Sample ~200 points across height
+    for y in range(y1, y2 + 1, step_y):
         if not point_in_polygon(x1, y, polygon):
             return False
         if not point_in_polygon(x2, y, polygon):
             return False
 
-    # Sample a few interior points for very large rectangles
-    mid_x = (x1 + x2) // 2
-    mid_y = (y1 + y2) // 2
-    if not point_in_polygon(mid_x, mid_y, polygon):
-        return False
+    # Sample interior points in a grid pattern
+    step_x_interior = max(1, width // 20)
+    step_y_interior = max(1, height // 20)
+    for x in range(x1 + step_x_interior, x2, step_x_interior):
+        for y in range(y1 + step_y_interior, y2, step_y_interior):
+            if not point_in_polygon(x, y, polygon):
+                return False
 
     return True
 

@@ -113,13 +113,13 @@ Checking 122760 rectangle candidates...
 Progress: 0/496 tiles checked...
   [Progress updates as it finds larger rectangles...]
 Progress: 450/496 tiles checked...
-Checked 31308 candidate rectangles
+Checked 71216 candidate rectangles
 
 ============================================================
-Largest valid rectangle area: 4606686568
-Corners: (15065, 83109) and (84782, 17034)
+Largest valid rectangle area: 1468516555
+Corners: (5246, 66499) and (94598, 50065)
 
-Answer: 4606686568
+Answer: 1468516555
 ```
 
 ## Algorithm Details
@@ -168,13 +168,14 @@ Part 2 adds a significant constraint - the rectangle must be entirely within the
 
 **Key Optimizations**:
 - Only check rectangles that could beat the current max
-- Sample points intelligently (corners + edges + center)
+- Dense sampling: ~200 points along each edge + 20×20 interior grid
 - Early termination when checking validity
 
 **Complexity**:
-- Time: O(n² × m) where n = tiles, m = polygon vertices for each point test
-- With 496 tiles, checks ~122k candidates, validates ~31k promising ones
-- Runs in ~10-20 seconds
+- Time: O(n² × m × s) where n = tiles, m = polygon vertices, s = samples per validation
+- With 496 tiles, checks ~122k candidates, validates ~71k promising ones
+- Dense sampling ensures no invalid rectangles slip through
+- Runs in ~30-60 seconds due to thorough validation
 
 ## Solution Verification
 
@@ -185,13 +186,15 @@ Part 2 adds a significant constraint - the rectangle must be entirely within the
 - **Verification**: 69,804 × 68,049 = 4,750,092,396 ✓
 
 ### Part 2
-- **Largest area**: 4,606,686,568
-- **Corners**: (15065, 83109) and (84782, 17034)
-- **Width**: 69,718 cells | **Height**: 66,076 cells
-- **Verification**: 69,718 × 66,076 = 4,606,686,568 ✓
-- **Note**: Smaller than Part 1 due to polygon constraint ✓
+- **Largest area**: 1,468,516,555
+- **Corners**: (5246, 66499) and (94598, 50065)
+- **Width**: 89,353 cells | **Height**: 16,435 cells
+- **Verification**: 89,353 × 16,435 = 1,468,516,555 ✓
+- **Note**: Much smaller than Part 1 due to polygon constraint ✓
+- **Shape**: Wide but short rectangle that fits within the polygon
 
 ### Common Mistakes
 
 1. **Part 1**: Don't forget the "+1" when counting grid cells! The geometric distance between coordinates is different from the number of cells they span.
 2. **Part 2**: The polygon is formed by the tiles in list order - don't sort them!
+3. **Part 2 Critical**: Sparse sampling is insufficient! For rectangles spanning tens of thousands of cells, checking only 10 points along edges will miss concave regions where the rectangle extends outside the polygon. Must sample densely (~200+ points per edge + interior grid).
