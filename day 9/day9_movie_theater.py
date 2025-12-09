@@ -6,8 +6,10 @@ Day 9: Movie Theater - Largest Rectangle Finder
 Given a list of red tile coordinates on a grid, find the largest rectangle
 that can be formed using any two red tiles as opposite corners.
 
-The area of a rectangle with corners at (x1, y1) and (x2, y2) is:
-    area = |x2 - x1| × |y2 - y1|
+Since we're counting grid cells (not geometric distance), the area formula is:
+    area = (|x2 - x1| + 1) × (|y2 - y1| + 1)
+
+Example: Tiles at (7,1) and (11,7) cover 5 columns × 7 rows = 35 cells
 """
 
 
@@ -34,7 +36,8 @@ def find_largest_rectangle(tiles):
 
     Algorithm:
     - For each pair of tiles (i, j), calculate the rectangle area
-    - Area = |x2 - x1| × |y2 - y1|
+    - Area = (|x2 - x1| + 1) × (|y2 - y1| + 1)
+    - We add 1 because we're counting grid cells, not distance
     - Return the maximum area found
 
     Time complexity: O(n²) where n is the number of tiles
@@ -49,9 +52,9 @@ def find_largest_rectangle(tiles):
             x1, y1 = tiles[i]
             x2, y2 = tiles[j]
 
-            # Calculate the area of the rectangle
-            width = abs(x2 - x1)
-            height = abs(y2 - y1)
+            # Calculate the area of the rectangle (counting grid cells)
+            width = abs(x2 - x1) + 1
+            height = abs(y2 - y1) + 1
             area = width * height
 
             # Update maximum area

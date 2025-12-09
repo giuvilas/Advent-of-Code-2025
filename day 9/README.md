@@ -14,9 +14,10 @@ The movie theater has a tile floor with red tiles at specific coordinates. The c
 
 ### Key Concepts
 
-- Red tiles are given as (x, y) coordinates
+- Red tiles are given as (x, y) coordinates on a grid
 - Any two red tiles can serve as opposite corners of a rectangle
-- Rectangle area = |x₂ - x₁| × |y₂ - y₁|
+- **Important**: We're counting grid cells, not geometric distance!
+- Rectangle area = (|x₂ - x₁| + 1) × (|y₂ - y₁| + 1)
 - Goal: Find the maximum possible area
 
 ### Example
@@ -34,19 +35,13 @@ Given red tiles at:
 ```
 
 The largest rectangle has area **50**, formed between tiles at (2,5) and (11,1):
-- Width = |11 - 2| = 9
-- Height = |5 - 1| = 4
-- Area = 9 × 4... wait, that's 36, not 50
+- Columns: from 2 to 11 = 10 cells (2,3,4,5,6,7,8,9,10,11)
+- Rows: from 1 to 5 = 5 cells (1,2,3,4,5)
+- Width = |11 - 2| + 1 = 10
+- Height = |5 - 1| + 1 = 5
+- Area = 10 × 5 = 50 ✓
 
-Let me check: between (2,5) and (11,1):
-- Width = |11 - 2| = 9
-- Height = |5 - 1| = 4
-- Hmm, the problem says area 50...
-
-Actually, looking at the visualization, between (2,5) and (11,1), the grid shows a 10×5 rectangle (inclusive).
-The actual area is: (11-2+1) × (5-1+1) = 10 × 5 = 50.
-
-For this problem, we use the standard geometric formula: |x₂ - x₁| × |y₂ - y₁|.
+The "+1" is crucial because we're counting grid cells, not measuring distance!
 
 ## Setup
 
@@ -84,10 +79,10 @@ Or if the script is executable:
 ```
 Number of red tiles: 496
 
-Largest rectangle area: 4749954544
+Largest rectangle area: 4750092396
 Corners: (85024, 83904) and (15221, 15856)
 
-Answer: 4749954544
+Answer: 4750092396
 ```
 
 ## Algorithm Details
@@ -98,8 +93,8 @@ The solution uses a straightforward O(n²) algorithm:
 
 1. **Parse Input**: Read all red tile coordinates from `input.txt`
 2. **Check All Pairs**: For each pair of tiles (i, j):
-   - Calculate rectangle width: |x₂ - x₁|
-   - Calculate rectangle height: |y₂ - y₁|
+   - Calculate rectangle width: |x₂ - x₁| + 1 (counting cells, not distance)
+   - Calculate rectangle height: |y₂ - y₁| + 1 (counting cells, not distance)
    - Calculate area: width × height
 3. **Track Maximum**: Keep track of the maximum area found
 4. **Return Result**: Output the largest rectangle area
@@ -124,8 +119,12 @@ The solution uses a straightforward O(n²) algorithm:
 
 For the given input:
 - **Number of tiles**: 496
-- **Largest area**: 4,749,954,544
+- **Largest area**: 4,750,092,396
 - **Corners**: (85024, 83904) and (15221, 15856)
-- **Width**: |85024 - 15221| = 69,803
-- **Height**: |83904 - 15856| = 68,048
-- **Verification**: 69,803 × 68,048 = 4,749,954,544 ✓
+- **Width**: |85024 - 15221| + 1 = 69,804 cells
+- **Height**: |83904 - 15856| + 1 = 68,049 cells
+- **Verification**: 69,804 × 68,049 = 4,750,092,396 ✓
+
+### Common Mistake
+
+Don't forget the "+1" when counting grid cells! The geometric distance between coordinates is different from the number of cells they span.
