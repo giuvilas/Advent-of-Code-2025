@@ -4,9 +4,14 @@ Solution for [Advent of Code 2025 Day 10](https://adventofcode.com/2025/day/10)
 
 ## Files
 
-- `day10_factory.py` - Python script that solves the challenge
+- `day10_factory.py` - Part 1 solution (toggle lights)
+- `day10_part2.py` - Part 2 solution attempt (A* search)
+- `day10_part2_greedy.py` - Part 2 greedy approach
+- `day10_part2_math.py` - Part 2 mathematical approach
+- `PART2_NOTES.md` - Detailed Part 2 analysis and complexity discussion
 - `input.txt` - Puzzle input (167 machines)
-- `day10part1.txt` - Problem description
+- `day10part1.txt` - Part 1 problem description
+- `day10part2.txt` - Part 2 problem description
 - `example.txt` - Generated example file for validation
 
 ## Problem Overview
@@ -192,3 +197,39 @@ Machine 80 (9 lights, 9 buttons):
    - Current brute force simpler and fast enough
 
 The brute force approach is ideal here due to small problem size (≤13 buttons).
+
+## Part 2: Joltage Configuration (ILP Problem)
+
+### Problem Change
+Part 2 transforms the problem entirely:
+- Counters (not binary lights) start at 0
+- Buttons ADD 1 to counters (not toggle)
+- Goal: Reach exact target joltage values
+- Minimize total button presses
+
+### Mathematical Formulation
+This is an **Integer Linear Programming** problem:
+- Minimize: Σ(button presses)
+- Subject to: A × x = targets, where x ≥ 0, x ∈ ℤ
+
+### Complexity Challenge
+- Part 1: 2^13 combinations (manageable)
+- Part 2: State space exponential in target VALUES
+- Example: targets={67,29,30,40,18,54,21} → ~10^12 possible states!
+
+### Solution Approaches Attempted
+1. **A* Search** - Correct but too slow for large target values
+2. **Greedy Algorithm** - Fast but gets stuck, not optimal
+3. **Bounded Search** - Still exponential complexity
+
+### The Challenge
+Without libraries like `scipy` or `pulp` for ILP solving, Part 2 requires either:
+- Very sophisticated algorithm implementation
+- Clever problem-specific insight
+- External optimization libraries
+
+See `PART2_NOTES.md` for detailed analysis.
+
+### Partial Results
+- Part 1: ✅ 455 presses (complete)
+- Part 2: ⚠️ Algorithmic complexity requires optimization (see notes)
